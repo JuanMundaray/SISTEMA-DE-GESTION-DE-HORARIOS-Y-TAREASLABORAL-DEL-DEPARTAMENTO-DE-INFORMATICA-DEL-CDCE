@@ -1,0 +1,84 @@
+
+
+.title-space-header {
+    transition: all 0.3s ease-in-out;
+    top: 0px;
+    background: rgb(11,33,193);
+    background:  #195aff  ;
+    position: sticky;
+    z-index: 40;
+    min-height: 60px;
+    padding-top: 0.2vw;
+    padding-bottom: 0.2vw;
+}
+.logo{
+   display: flex;
+   align-items: center;
+   padding: 20px 0px;
+   min-height:60px;
+}
+
+.logo img{
+    max-width: 3vw;
+    max-height: 3vw;
+    min-width: 30px;
+    min-height: 30px;
+}
+
+.logo a {
+    color: #3a76cb;
+    text-transform: capitalize;
+    color: #ffffff;
+    font-size: 1.8vw;
+    font-weight: 500;
+    text-decoration: none;
+    text-wrap: nowrap;
+}
+.imagen_usuario{
+    height: 55px;
+    width: 55px;
+    box-shadow: 1px 1px 1px 1px;
+    margin-left: 4px;
+}
+
+.menu_dropdown_usuario div{
+    padding: 10px 20px;
+    border-radius: 20px;
+    
+}
+
+.menu_dropdown_usuario a span{
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.menu_dropdown_usuario a img{
+    height: 55px;
+    width: 55px;
+    margin-left: 4px;
+    border: 1px solid #ffffff;
+}
+
+.menu_dropdown_usuario div:hover:first-child{
+    background-color: rgba(255, 255, 255, 0.25)  !important;
+}
+
+@media (max-width:600px){
+    .logo a {
+        font-size: 12px;
+        padding: 0px;
+    }
+
+    .form_logo img{
+        height: 40px;
+        width: 40px;
+    }
+}
+
+@media(max-width:1000px){
+    .logo {
+        display: inline-block;
+        width: 78%;
+        padding: 10px 10px 10px 0px;
+    }
+}
