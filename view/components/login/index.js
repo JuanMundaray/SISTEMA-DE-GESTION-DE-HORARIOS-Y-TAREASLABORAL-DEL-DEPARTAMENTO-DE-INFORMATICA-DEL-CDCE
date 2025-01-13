@@ -37,6 +37,8 @@ $(document).ready(function(){
         }
     });
 });
+
+
 // script.js
 document.addEventListener("DOMContentLoaded", function() {
     const text = "INICIAR SESIÓN";
