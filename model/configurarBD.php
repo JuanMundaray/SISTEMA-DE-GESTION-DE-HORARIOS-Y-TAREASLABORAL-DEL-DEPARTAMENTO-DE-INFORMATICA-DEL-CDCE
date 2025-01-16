@@ -1,4 +1,6 @@
 <?php
+namespace App\config;
+
     define("MANEJADOR","pgsql");
     define("SERVIDOR","localhost");
     define("USUARIO","postgres");

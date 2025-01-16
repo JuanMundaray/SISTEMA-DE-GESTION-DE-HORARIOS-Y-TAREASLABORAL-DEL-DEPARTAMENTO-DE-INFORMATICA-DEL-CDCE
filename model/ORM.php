@@ -1,14 +1,22 @@
 <?php
 
-require_once("./configurarBD.php");
+namespace App\Model;
+
+require_once("configurarBD.php");
+
+use App\config;
+use PDO;
+use PDOException;
 
 class ORM {
     private $pdo;
     private $table;
+    private $schema;
 
-    public function __construct($table) {
+    public function __construct($table,$schema) {
 
         $this->table = $table;
+        $this->schema = $schema;
 
         try
         {
@@ -27,7 +35,7 @@ class ORM {
         $columns = implode(", ", array_keys($data));
         $placeholder = ":" . implode(", :", array_keys($data));
 
-        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholder)";
+        $sql = "INSERT INTO {$this->schema}.{$this->table} ($columns) VALUES ($placeholder)";
         $stmt = $this->pdo->prepare($sql);
 
         // Vincular los valores a los placeholders con bindValue
@@ -38,10 +46,10 @@ class ORM {
         return $stmt->execute();
     }
 
-    // READ
+    // READ ALL
     public function getAll() {
         try{
-            $sql = "SELECT * FROM {$this->table}";
+            $sql = "SELECT * FROM {$this->schema}.{$this->table}";
             $stmt = $this->pdo->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -59,7 +67,7 @@ class ORM {
                 $set .= "$key = :$key, ";
             }
             $set = rtrim($set, ", ");
-            $sql = "UPDATE {$this->table} SET $set WHERE id = :id";
+            $sql = "UPDATE {$this->schema}.{$this->table} SET $set WHERE id = :id";
             $data['id'] = $id;
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute($data);
@@ -70,11 +78,16 @@ class ORM {
         }
     }
 
-    // DELETE
-    public function borrar($id) {
-        $sql = "DELETE FROM {$this->table} WHERE id = :id";
+    // SOFT DELETE
+    public function delete($value,$column = "id") {
+
+        date_default_timezone_set('America/Caracas');
+        $delete_at=date('Y-m-d H:i:s');
+        $sql = "UPDATE {$this->schema}.{$this->table} SET delete_at = '$delete_at' WHERE $column = :value";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute(['id' => $id]);
+        $stmt->bindValue(":value", $value);
+
+        return $stmt->execute();
     }
 }
 ?>
