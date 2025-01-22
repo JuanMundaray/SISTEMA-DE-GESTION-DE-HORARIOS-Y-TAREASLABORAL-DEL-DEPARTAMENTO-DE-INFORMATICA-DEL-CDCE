@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-require_once("configurarBD.php");
+require_once("../config/configBD.php");
 
 use App\config;
 use PDO;
@@ -55,50 +55,44 @@ class ORM {
         $limit = null
         ) 
     {
-        try{
 
-            //si le envian column como un array vacio entonces se seleccionan todos los campos por defecto
-            if(empty($column) || !is_array($column)){
-                $column = ["*"];
-            }
-
-            // construir la consulta
-            $query = "SELECT " . implode(", ", $column) . " FROM {$this -> schema}.{$this -> table}";
-    
-            // agreagar consultas JOIN
-            foreach ($joins as $join) {
-                $query .= " " . strtoupper($join['type']) . " JOIN " . $join['table'] . " ON " . $join['on'];
-            }
-    
-            // agregar consulta WHERE
-            if (!empty($where)) {
-                $query .= " WHERE " . implode(" AND ", array_map(function ($column) {
-                    return "$column = :$column";
-                }, array_keys($where)));
-            }
-    
-            // agregar clausula LIMIT
-            if ($limit !== null) {
-                $query .= " LIMIT $limit";
-            }
-    
-            // preparar la consulta
-            $stmt = $this->pdo->prepare($query);
-    
-            // Vincular parametros
-            foreach ($where as $key => $value) {
-                $stmt->bindValue(":$key", $value);
-            }
-    
-            // Execute and fetch results
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //si le envian column como un array vacio entonces se seleccionan todos los campos por defecto
+        if(empty($column) || !is_array($column)){
+            $column = ["*"];
         }
+
+        // construir la consulta
+        $query = "SELECT " . implode(", ", $column) . " FROM {$this -> schema}.{$this -> table}";
+
+        // agreagar consultas JOIN
+        foreach ($joins as $join) {
+            $query .= " " . strtoupper($join['type']) . " JOIN " . $join['table'] . " ON " . $join['on'];
+        }
+
+        // agregar consulta WHERE
+        if (!empty($where)) {
+            $query .= " WHERE " . implode(" AND ", array_map(function ($column) {
+                return "$column = :$column";
+            }, array_keys($where)));
+        }
+
+        // agregar clausula LIMIT
+        if ($limit !== null) {
+            $query .= " LIMIT $limit";
+        }
+
+        // preparar la consulta
+        $stmt = $this->pdo->prepare($query);
+
+        // Vincular parametros
+        foreach ($where as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
+        // Execute and fetch results
+        $stmt->execute();
         
-        catch(PDOException $e)
-        {
-            return $e;
-        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     }
 

@@ -15,22 +15,22 @@ $(document).ready(function(){
                 data: form.serialize(),
                 url: '../../../controller/ControllerUsuario.php', // URL del script PHP,
                 type: 'post',
+                dataType:'json',
                 success: function(response) {
 
-                    console.log(response.statuscode);
-
-                    if(response==Array){
-
+                    //RESULTA EXITOSA LA CONSULTA
+                    if(response.success){
+                        window.location.href = '../home/home.php';
                     }
 
                     else{
+                        $("#span_1").removeAttr("hidden",true);
+                        $("#span_2").attr("hidden",true);
+                        console.log(response.message);
 
-                        if(response.statuscode === 201){
-    
-                            //TERMINAR ANIMACION DE SPIN
-                            $("#span_1").removeAttr("hidden",true);
-                            $("#span_2").attr("hidden",true);
-                        }         
+                        if(response.message === "USUARIO NO EXISTE"){
+                            console.log(response); 
+                        }
                     }
 
 

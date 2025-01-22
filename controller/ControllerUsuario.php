@@ -3,12 +3,13 @@ namespace App\Controller;
 
 require_once("../model/ModelUsuario.php");
 use App\Model\usuario;
+use PDO;
 
 $usuario = new usuario();
 $option=$_REQUEST['option'];
 
 switch($option){
-    case 1 :
+    case "insertar_usuario" :
         $resultado = $usuario->insertar_usuario([
             'nombre'=>'juan',
             'apellido'=>'mundaray',
@@ -35,19 +36,13 @@ switch($option){
     break;
 
     case "login" :
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Obtener los valores enviados desde el formulario
-            $cedula = isset($_POST['cedula']) ? $_POST['cedula'] : '';
-            $password = isset($_POST['password']) ? $_POST['password'] : '';
+        // Obtener los valores enviados desde el formulario
+        $cedula = $_POST['cedula'];
+        $password = $_POST['password'];
+        
+        $response = $usuario -> login($cedula,$password);
 
-            //Hacer login con la clase usuario
-            $resultado = $usuario -> login($cedula,$password);
+        echo json_encode($response);
 
-            echo json_encode($resultado);
-        }
-
-        else{
-            echo "ERROR AL RECIBIR LOS DATOS";
-        }
     break;
 }

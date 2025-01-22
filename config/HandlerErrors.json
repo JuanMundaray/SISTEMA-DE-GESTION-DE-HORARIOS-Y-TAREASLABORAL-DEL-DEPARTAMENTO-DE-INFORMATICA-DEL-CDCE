@@ -1,0 +1,24 @@
+{
+    "CONSULTA_EXITOSA":{
+        "code":1000,
+        "success": true,
+        "message": "EXITO",
+        "data": null
+    },
+    "USUARIO_INEXISTENTE":{
+        "code":1001,
+        "success": false,
+        "message": "USUARIO NO EXISTE"
+    },
+    "PASSWORD_INCORRECTA":{
+        "code":1002,
+        "success": false,
+        "message": "CONTRASEÑA INCORRECTA"
+    },
+    "ERROR_SQL":{
+        "code":1003,
+        "success": false,
+        "message": "ERROR EN LA CONSULTA",
+        "error": null
+    }
+}

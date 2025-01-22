@@ -26,8 +26,17 @@ class usuario extends persona
     }
     
     //OBTENER USUARIO
-    public function obtener_usuario($table, $columns = "*", $joins = [], $where = [], $limit = null)
+    public function obtener_usuario(array $columns = [],array $joins = [],array $where = [], $limit = null)
     {
+        try{
+            $resultado = $this->orm->select(column:$columns, joins:$joins, where: $where, limit: $limit);
+        }
+
+        catch(Exception $e){
+            $resultado = $e->getMessage();
+        }
+
+        return $resultado;
 
     }
 
@@ -50,24 +59,52 @@ class usuario extends persona
     //LOGIN DE USUARIO
     public function login($cedula,$password){
 
-        $resultado = false;
         try{
             //COMPROBAR SI EXISTE EL USUARIO
-            $resultado = $this->orm->select(where:["cedula" => $cedula,"contrasena" => $password]);
+            $resultado = $this->orm->select(where:["cedula" => $cedula]);
+    
+            //EL USUARIO SI EXISTE
+            if(!empty($resultado)){
+                //COMPROBAR SI LA CONTRASEÑA COINCIDE CON EL USUARIO
+                $resultado = $this->orm->select(where:["cedula" => $cedula,"contrasena" => $password]);
+        
+                //SI LA CONTRASEÑA ES INCORRECTA DEVUELVE ESTO
+                if(empty($resultado)){
+                    $response = [
+                        "success"=> false,
+                        "message" => "CONTRASEÑA INCORRECTA",
+                        "data" => null
+                    ];
+                }
+                else{
+                    $response = [
+                        "success"=> true,
+                        "message" => "EXITO",
+                        "data" => $resultado
+                    ];
+                }
+            }
             
-            if(empty($resultado)){
-               $resultado = [
-                    "statuscode" => 201,
-                    "message" => "ERROR EN LA TABLA VACIA",
-                    "data" => $resultado
-               ];
+            //EL USUARIO NO EXISTE
+            else{
+                $response = [
+                    "success"=> false,
+                    "message" => "USUARIO NO EXISTE",
+                    "data" => null
+                ];
             }
         }
+
         catch(Exception $e){
-            $resultado = $e->getMessage();
+            $response = [
+                "success"=> false,
+                "error" => $e -> getMessage(),
+                "message" => "ERROR SQL",
+                "data" => null
+            ];
         }
 
-        return $resultado;
+        return $response;
 
     }
 
