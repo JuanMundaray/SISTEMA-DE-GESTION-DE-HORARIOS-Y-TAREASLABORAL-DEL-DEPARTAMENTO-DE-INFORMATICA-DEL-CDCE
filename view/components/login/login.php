@@ -19,10 +19,15 @@
     <?php require_once("../plantillas/cabecera/cabecera.php") ?>
 
     <div class="d-flex justify-content-center align-items-center login-father-container">
-        <div class="bg-white pe-5 ps-5 pb-2 contenedor_login me-5 ms-5 mb-5">
+
+        <div class="bg-white pe-5 ps-5 pb-2 contenedor_login me-5 ms-5 mb-5 rounded">
+
             <div class="pb-5 pt-5 container">
+
                 <form method="post" id="form_login">
+
                     <div class="row gy-4 justify-content-center">
+
                         <div class="col-md-12 mb-4 d-flex flex-column justify-content-center align-items-center form_logo">
                             <img src="../../assets/logo/CDCE-logo-ministerio-de-educacion.png" />
                             <div class="typing-container"><h2 class="mt-3" id="typing-text"></h2></div>
@@ -36,9 +41,12 @@
                                     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                     </svg>                          
                                 </span>
-                                <input type="text" class="form-control form-control-lg" placeholder="Documento de Identidad">
+
+                                <input type="text" class="form-control form-control-lg" name="cedula" placeholder="Documento de Identidad">
+
                             </div>
                         </div>
+
                         <div class="col-md-12 col-sm-12 form-floating">
                             <div class="input-group-prepend input-group-lg d-flex">
                                 <span class="input-group-text">
@@ -47,9 +55,13 @@
                                         <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
                                     </svg>
                                 </span>
-                                <input type="password" class="form-control form-control-lg"  placeholder="Contraseña">
+
+                                <input type="password" class="form-control form-control-lg" name="password"  placeholder="Contraseña">
+
                             </div>
                         </div>
+
+                        <input type="hidden" value="login" name="option" id="option">
 
                         <div class="col-md-12 col-sm-7 mt-5 d-flex justify-content-center">
                             <button id="button_submit" class="btn btn-primary btn-lg w-50">
@@ -69,7 +81,7 @@
     <script src="../../css//bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
     <script src="../../css//bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../js/jquery-3.7.1.js"></script>
-    <script src="./index.js"></script>
+    <script src="./js/index.js"></script>
     
 </body>
 </html>

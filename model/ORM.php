@@ -31,7 +31,8 @@ class ORM {
     }
 
     // CREATE
-    public function insert($data) {
+    public function insert(array $data) {
+
         $columns = implode(", ", array_keys($data));
         $placeholder = ":" . implode(", :", array_keys($data));
 
@@ -46,29 +47,78 @@ class ORM {
         return $stmt->execute();
     }
 
-    // READ ALL
-    public function getAll() {
+    //READ
+    public function select(
+        $column = [], //Los array de aqui no son array asociativos
+        $joins = [], //LOS ARRAY DEL PARAMETRO JOIN SON ASOCIATIVOS Y SON LAS TABLAS QUE SE UTILIZARAN PARA HACER EL JOIN
+        $where = [], //LOS ARRAY QUE RECIBE EL WHERE SON ASOCIATIVOS, EL KEY DEL ARRAY HACE REFERENCIA A LA COLUMNA Y EL VALOR QUE TIENE QUE ENCONTRARSE EN ESA COLUMNA EN LA BD CORRESPONDE AL VALOR DEL KEY
+        $limit = null
+        ) 
+    {
         try{
-            $sql = "SELECT * FROM {$this->schema}.{$this->table}";
-            $stmt = $this->pdo->query($sql);
+
+            //si le envian column como un array vacio entonces se seleccionan todos los campos por defecto
+            if(empty($column) || !is_array($column)){
+                $column = ["*"];
+            }
+
+            // construir la consulta
+            $query = "SELECT " . implode(", ", $column) . " FROM {$this -> schema}.{$this -> table}";
+    
+            // agreagar consultas JOIN
+            foreach ($joins as $join) {
+                $query .= " " . strtoupper($join['type']) . " JOIN " . $join['table'] . " ON " . $join['on'];
+            }
+    
+            // agregar consulta WHERE
+            if (!empty($where)) {
+                $query .= " WHERE " . implode(" AND ", array_map(function ($column) {
+                    return "$column = :$column";
+                }, array_keys($where)));
+            }
+    
+            // agregar clausula LIMIT
+            if ($limit !== null) {
+                $query .= " LIMIT $limit";
+            }
+    
+            // preparar la consulta
+            $stmt = $this->pdo->prepare($query);
+    
+            // Vincular parametros
+            foreach ($where as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+    
+            // Execute and fetch results
+            $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
+        
         catch(PDOException $e)
         {
-            echo $e->getMessage()." --- ".$e->getLine();
+            return $e;
         }
+
     }
 
     // UPDATE
-    public function update($data, $id) {
+    public function update(
+        array $data //  los datos para actualizar la consulta, se reciben en un array asociativo
+        , array $id                        //el identificador para actualizar el campo o campos de la tabla
+    ) {
         try{
             $set = "";
             foreach ($data as $key => $value) {
                 $set .= "$key = :$key, ";
             }
+
+            //se extrae el identificador que viene de la base de datos
+            $column_id = array_keys($id);
+            $value_column_id = array_values($id);
+
             $set = rtrim($set, ", ");
-            $sql = "UPDATE {$this->schema}.{$this->table} SET $set WHERE id = :id";
-            $data['id'] = $id;
+            $sql = "UPDATE {$this->schema}.{$this->table} SET $set WHERE $column_id[0] = $value_column_id[0]";
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute($data);
         }
@@ -78,13 +128,14 @@ class ORM {
         }
     }
 
-    // SOFT DELETE
-    public function delete($value,$column = "id") {
+    // DELETE
+    public function delete($id) {
 
-        date_default_timezone_set('America/Caracas');
-        $delete_at=date('Y-m-d H:i:s');
-        $sql = "UPDATE {$this->schema}.{$this->table} SET delete_at = '$delete_at' WHERE $column = :value";
+        $placeholders = implode(",", array_fill(0, count($id), "?"));
+        $sql = "DELETE FROM {$this->table} WHERE id IN ($placeholders)";
         $stmt = $this->pdo->prepare($sql);
+    
+        return $stmt->execute($id); // Pasamos el array de IDs directamente
         $stmt->bindValue(":value", $value);
 
         return $stmt->execute();

@@ -17,29 +17,58 @@ class usuario extends persona
         $this->orm = new ORM("usuario","gestion_trabajo");
     }
 
+    //INSERTAR USUARIO
 	public function insertar_usuario($data)
     {
         $resultado = $this->orm->insert($data);
 
         return $resultado;
     }
+    
+    //OBTENER USUARIO
+    public function obtener_usuario($table, $columns = "*", $joins = [], $where = [], $limit = null)
+    {
 
-    public function actualizar_usuario()
+    }
+
+    //ACTUALIZAR USUARIO
+    public function actualizar_usuario(array $data,array $column)
     {
     }
 
-    public function eliminar_usuario($value,$column="id")
+    //ELIMINACION CON SOFT DELETE
+    public function eliminar_usuario(array $column)
+    
     {
-      $resultado = $this -> orm -> delete($value,$column);
+      $resultado = $this -> orm -> update(
+            ["delete_at"=>  date('Y-m-d H:i:s')],
+            $column
+        );
       return $resultado;
     }
 
-    function obtener() {
-    }
-    
+    //LOGIN DE USUARIO
+    public function login($cedula,$password){
 
-    public function obtener_usuario($tabla, $columnas = '*', $condiciones = [], $orden = '', $limite = '')
-    {
+        $resultado = false;
+        try{
+            //COMPROBAR SI EXISTE EL USUARIO
+            $resultado = $this->orm->select(where:["cedula" => $cedula,"contrasena" => $password]);
+            
+            if(empty($resultado)){
+               $resultado = [
+                    "statuscode" => 201,
+                    "message" => "ERROR EN LA TABLA VACIA",
+                    "data" => $resultado
+               ];
+            }
+        }
+        catch(Exception $e){
+            $resultado = $e->getMessage();
+        }
+
+        return $resultado;
+
     }
 
     //FUNCION PARA QUE EL USUARIO HAGA LOGIN
