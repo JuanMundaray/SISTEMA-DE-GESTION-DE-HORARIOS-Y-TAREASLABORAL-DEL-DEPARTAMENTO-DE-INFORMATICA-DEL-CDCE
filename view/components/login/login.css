@@ -1,8 +1,11 @@
 @import url(../../css/style.css);
 
+:root{
+	
+}
+
 .form-control input[text]{
   padding-left: 20px;
-  
 }
 
 .form_logo img{
@@ -19,12 +22,18 @@
   box-shadow: 1px 1px 9px 1px rgb(153, 153, 153);
 }
 
-.recuperar_password{
-  color: gray;
+#form_login label{
+  font-size: large;
+  font-weight: 500;
+  font-family: "Roboto";
+  color: rgb(49, 49, 49);
+}
+
+.recuperar_contrasena{
 }
 
 .login-father-container{
-  margin-top: 150px;
+  margin-top: 10vh;
 }
 
 /* animacion del titulo */
@@ -44,4 +53,28 @@
 
 
 @media (max-width:600px){
+	#form_login label{
+	  font-size: small;
+	}
+	.form-control{
+		height: 5px;
+		padding-top: 0;
+		padding-bottom: 0;
+		font-size: small;
+	}
+	#button_submit{
+		font-size: small;
+		text-wrap: nowrap;
+		min-width: 120px;
+	}
+	#typing-text{
+		font-size: medium;
+	}
+	.recuperar_password{
+	  font-size: small;
+	  text-align: center;
+	}
+	.gy-4 {
+	  --bs-gutter-y: 0.5rem;
+	}
 }

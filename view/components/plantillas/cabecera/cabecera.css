@@ -3,8 +3,8 @@
 .title-space-header {
     transition: all 0.3s ease-in-out;
     top: 0px;
-    background: rgb(11,33,193);
-    background:  #195aff  ;
+    background: rgb(31,41,236);
+    background: linear-gradient(90deg, rgba(31,41,236,1) 73%, rgba(17,23,134,1) 100%);
     position: sticky;
     z-index: 40;
     min-height: 60px;
