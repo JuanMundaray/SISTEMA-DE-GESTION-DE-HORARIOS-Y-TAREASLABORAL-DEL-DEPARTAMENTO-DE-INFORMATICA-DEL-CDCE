@@ -40,7 +40,7 @@ class usuario extends persona
 
     }
 
-    //ACTUALIZAR USUARIO
+    //ACTUALIZAR USUARIO 
     public function actualizar_usuario(array $data,array $column)
     {
     }
