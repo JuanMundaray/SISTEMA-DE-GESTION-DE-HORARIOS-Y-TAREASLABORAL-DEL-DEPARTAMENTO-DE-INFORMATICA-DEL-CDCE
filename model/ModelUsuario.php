@@ -57,40 +57,54 @@ class usuario extends persona
     }
 
     //LOGIN DE USUARIO
-    public function login($cedula,$password){
+    public function iniciar_sesion($cedula,$password){
 
         try{
             //COMPROBAR SI EXISTE EL USUARIO
             $resultado = $this->orm->select(where:["cedula" => $cedula]);
+
+            // Leer el contenido del archivo y lo convierte en un array asociativo
+            $app_responses = json_decode(file_get_contents('../config/app_responses.json'),true);
     
             //EL USUARIO SI EXISTE
             if(!empty($resultado)){
                 //COMPROBAR SI LA CONTRASEÑA COINCIDE CON EL USUARIO
-                $resultado = $this->orm->select(where:["cedula" => $cedula,"contrasena" => $password]);
+                $resultado = $this->orm->select(where:["cedula" => $cedula,"password" => $password]);//arreglar esto
+
         
                 //SI LA CONTRASEÑA ES INCORRECTA DEVUELVE ESTO
                 if(empty($resultado)){
                     $response = [
-                        "success"=> false,
-                        "message" => "CONTRASEÑA INCORRECTA",
-                        "data" => null
+                        "success"=> $app_responses['PASSWORD_INCORRECTA']["success"],
+                        "message" => $app_responses['PASSWORD_INCORRECTA']["message"],
+                        "code" => $app_responses['PASSWORD_INCORRECTA']["code"]
                     ];
                 }
-                else{
+                if(!empty($resultado)){
                     $response = [
-                        "success"=> true,
-                        "message" => "EXITO",
+                        "success"=> $app_responses['RESPUESTA_EXITOSA']["success"],
+                        "code" => $app_responses['RESPUESTA_EXITOSA']["code"],
+                        "message" => $app_responses['RESPUESTA_EXITOSA']["message"],
                         "data" => $resultado
                     ];
+
+                    session_start();
+                    //GUARDAR TODOS LOS DATOS DEL USUARIO EN LA SESION
+                    foreach ($resultado as $row) {
+                        foreach ($row as $columnName => $value) {
+                            // Usar el nombre de la columna como el nombre de la variable de sesión
+                            $_SESSION[$columnName]= $value;
+                        }
+                    }
                 }
             }
             
             //EL USUARIO NO EXISTE
             else{
                 $response = [
-                    "success"=> false,
-                    "message" => "USUARIO NO EXISTE",
-                    "data" => null
+                    "success"=> $app_responses['USUARIO_INEXISTENTE']["success"],
+                    "message" => $app_responses['USUARIO_INEXISTENTE']["message"],
+                    "code" => $app_responses['USUARIO_INEXISTENTE']["code"]
                 ];
             }
         }
@@ -108,87 +122,15 @@ class usuario extends persona
 
     }
 
-    //FUNCION PARA QUE EL USUARIO HAGA LOGIN
-
-    // public function login($nombre_usuario,$contrasena)
-    // {
-    //     $resultado = false;
-    //     try{
-
-    //         //COMPROBAR SI EL USUARIO EXISTE
-
-    //         $consulta = "SELECT * FROM 
-    //         actividades.usuario
-    //         WHERE nombre_usuario = :nombre_usuario AND activo=true";
-
-    //         $resultadoPDO = $db->prepare($consulta);
-
-    //         $resultadoPDO->execute(array(
-    //         ":nombre_usuario"=>$nombre_usuario));
-
-    //         $coincidencia=$resultadoPDO->rowCount();
-    //         $usuario_coincidencia=$resultadoPDO->fetchAll();
-            
-    //         //SI EL USUARIO EXISTE REALIZAR ESTO
-
-    //         if ($coincidencia==1) {
-    //             //COMPROBAR SI LA CONTRASEÑA COINCIDE
-    //             if((password_verify($contrasena,$usuario_coincidencia[0]['contrasena'])||($contrasena==$usuario_coincidencia[0]['contrasena']))){
-    //                 $consulta="SELECT * FROM 
-    //                 actividades.usuario
-    //                 LEFT JOIN actividades.departamentos
-    //                 ON usuario.departamento_usuario=departamentos.id_departamento
-    //                 WHERE nombre_usuario = :nombre_usuario";
-    //                 $resultadoPDO = $db->prepare($consulta);
-    //                 $resultadoPDO->execute(array(
-    //                 ":nombre_usuario"=>$nombre_usuario));
-    //                 $resultado=$resultadoPDO->fetchAll();
-    //                 $resultadoPDO->closeCursor();
-
-    //                 session_start();
-    //                 $_SESSION["rol_usuario"]=$resultado[0]["rol_usuario"];
-    //                 $_SESSION["id_usuario"]=$resultado[0]["id_usuario"];
-    //                 $_SESSION["nombre_departamento"]=$resultado[0]["nombre_departamento"];
-    //                 $_SESSION["departamento_usuario"]=$resultado[0]["departamento_usuario"];
-    //                 $_SESSION["nombre_usuario"]=$nombre_usuario;
-    //                 header('location:../View/Dashboard.php');
-    //                 exit();
-    //             }
-    //             //ESTO SUCEDE SI LA CONTRASEÑA NO COINCIDE
-    //             else{
-    //                 echo $usuario_coincidencia[0]['contrasena'];
-    //                 header('location:../View/login.php?ERR_PASSWORD');
-    //                 exit();
-    //             }
-    //         }   
-
-    //         elseif(empty($resultado)){
-    //             header('location:../View/login.php?ERR_INEXISTENCIA');
-    //             exit();
-    //         }
-    //     }
-    //     catch(Exception $objeto){
-    //         echo $objeto->getMessage();
-    //         $resultado = false;
-    //     }
-        
-    //     return $resultado; 
-    // }
-
-
-    public function cerrarSesion()
+    public function cerrar_sesion()
     {
-        $resultado = false;
         try{
             session_start();
             session_destroy();
         }
         catch(Exception $objeto){
             echo $objeto->getMessage();
-            $resultado = false;
         }
-        
-        return $resultado; 
     }
 }
 

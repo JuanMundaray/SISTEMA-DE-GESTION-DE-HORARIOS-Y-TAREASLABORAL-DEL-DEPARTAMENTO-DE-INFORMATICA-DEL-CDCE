@@ -24,4 +24,7 @@ main{
     padding: 5vh 2vw;
     border-radius: 2px;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    flex-grow: 1; /* Hace que el main ocupe el espacio disponible */
+    padding: 20px; /* Opcional, para agregar espacio interno */
+    overflow: hidden; /* Evita el desbordamiento de contenido */
 }

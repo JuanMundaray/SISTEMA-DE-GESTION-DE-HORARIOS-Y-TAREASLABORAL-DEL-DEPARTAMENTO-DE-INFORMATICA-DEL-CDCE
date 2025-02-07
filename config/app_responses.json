@@ -1,5 +1,5 @@
 {
-    "CONSULTA_EXITOSA":{
+    "RESPUESTA_EXITOSA":{
         "code":1000,
         "success": true,
         "message": "EXITO",
